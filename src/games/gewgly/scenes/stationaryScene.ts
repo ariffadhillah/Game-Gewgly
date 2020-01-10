@@ -108,11 +108,26 @@ export class StationaryScene extends Phaser.Scene {
     
         // });
 
-        balls.getChildren().forEach(
-            ball => {
-                // ball.setInteractive({ cursor: 'url(./src/games/gewgly/assets/images/pointer.png), pointer' })
-            }
-        );
+          balls.getChildren().forEach(
+                ball => {
+                    ball.setInteractive().on('pointerdown', (pointer, gameobject)=> {
+                        // gameobject.setTint(
+                            
+                             this.add.group(null, {
+                                key: 'balls', 
+                                frame: [0, 1, 5],
+                                setScale: { x: 3, y: 3 },
+                                hitArea: hitArea,
+                                hitAreaCallback: hitAreaCallback,                                                                
+                            })
+                    // );
+                })
+                
+                // ball = new Phaser.Geom.Circle(400, 300, 220);
+                // ball = this.buttonA;
+            //    this.buttonA =  this.add.image(465, 365, 'play').setInteractive();
+            });
+        
         // https://photonstorm.github.io/phaser3-docs/Phaser.Types.GameObjects.Group.html#.GroupCreateConfig
     
         Phaser.Actions.PlaceOnCircle( balls.getChildren(), circle);
