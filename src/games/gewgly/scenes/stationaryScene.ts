@@ -99,8 +99,18 @@ export class StationaryScene extends Phaser.Scene {
             document.body.style.cursor = 'default';
         });
 
-        this.buttonA = this.add.image(345, 365, 'play').setInteractive();
+       this.buttonA = this.add.image(345, 365, 'play',).setInteractive();
         this.buttonB = this.add.image(465, 365, 'play').setInteractive();
+        
+
+        this.buttonA.on('pointerdown', () => {
+            if(this.buttonA)
+                this.buttonA.setTint(0x0000ff);
+        });
+        this.buttonB.on('pointerdown', () => {
+            if(this.buttonB)
+                this.buttonB.setTint(0x0000ff);
+        });
 
         // this.input.on('pointerover', function (pointer, gameObject) {
 
@@ -113,13 +123,13 @@ export class StationaryScene extends Phaser.Scene {
                     ball.setInteractive().on('pointerdown', (pointer, gameobject)=> {
                         // gameobject.setTint(
                             
-                             this.add.group(null, {
-                                key: 'balls', 
-                                frame: [0, 1, 5],
-                                setScale: { x: 3, y: 3 },
-                                hitArea: hitArea,
-                                hitAreaCallback: hitAreaCallback,                                                                
-                            })
+//                              this.add.group(null, {
+//                                 key: 'balls', 
+//                                 frame: [0, 1, 5],
+//                                 setScale: { x: 3, y: 3 },
+//                                 hitArea: hitArea,
+//                                 hitAreaCallback: hitAreaCallback,                                                                
+//                             })
                     // );
                 })
                 
