@@ -1,6 +1,8 @@
 import { Cursor } from "../objects/Cursor/cursor";
 import { Eye } from "../objects/Eye/eye";
 import { ConfigType } from "../objects/Eye/schema";
+import { GameObject } from "../../../../patterns/behavioral-design-patterns/command/gameobject";
+import { Input } from "phaser";
 
 export class StationaryScene extends Phaser.Scene {
 
@@ -15,6 +17,8 @@ export class StationaryScene extends Phaser.Scene {
     private downButton;
     private upButton;
     private spinSpeed:number;
+    private highlight;
+
   
     constructor() {
         super({ key: "StationaryScene" });
@@ -39,6 +43,8 @@ export class StationaryScene extends Phaser.Scene {
         this.balls = this.generateBalls();
     
         this.dance = this.generateDance();
+
+        // this.buttonContoll();
 
         this.inputA = this.generateEyeArg( 340, 300, 3.0 );
         this.inputB = this.generateEyeArg( 460, 300, 3.0 );
@@ -66,6 +72,7 @@ export class StationaryScene extends Phaser.Scene {
         };
     }
 
+    
     generateBalls() {
 
         const hitArea = new Phaser.Geom.Rectangle(0, 0, 32, 32);
@@ -80,88 +87,86 @@ export class StationaryScene extends Phaser.Scene {
             hitArea: hitArea,
             hitAreaCallback: hitAreaCallback,
         });
-
+       
+              
         let that = this;
 
         this.input.on('gameobjectdown', function (pointer, gameObject) {
 
-            console.log("gameObject", gameObject);
+            if( that[that.highlight] ) {
+                 that[that.highlight].target = gameObject
+                }
+        
+            })
 
-            that.inputA.target = gameObject;
-            that.inputB.target = gameObject;
-        });
+                this.buttonA = this.add.image(345, 365, 'play',).setInteractive();
+                this.buttonB = this.add.image(465, 365, 'play').setInteractive();        
+                this.buttonA.on('pointerdown', () => {
+                    this.buttonB.setTint();
+                    if(this.highlight === "inputA") {
+                        this.buttonA.setTint();
+                        this.highlight = null;
+                    } else {
+                        this.buttonA.setTint(0x0000ff);
+                        this.highlight = "inputA";
+                    }
+                    });
 
+                    this.buttonB.on('pointerdown', () => {
+                    this.buttonA.setTint();
+                    if(this.highlight === "inputB") {
+                        this.buttonB.setTint();
+                        this.highlight = null;
+                    } else {
+                        this.buttonB.setTint(0x0000ff);
+                        this.highlight = "inputB";
+                    }
+                    });
+        
+                                   
+    
         this.input.on('gameobjectover', function (pointer, gameObject) {
-            document.body.style.cursor = 'pointer';
+            document.body.style.cursor = 'pointer';             
         });
         
         this.input.on('gameobjectout', function (pointer, gameObject) {
-            document.body.style.cursor = 'default';
+            document.body.style.cursor = 'default';           
         });
 
-       this.buttonA = this.add.image(345, 365, 'play',).setInteractive();
-        this.buttonB = this.add.image(465, 365, 'play').setInteractive();
-        
+      
+        balls.getChildren().forEach(
+            s => s.setInteractive({ cursor: 'url(./src/games/gewgly/assets/images/balls.png), pointer' })
+        );
 
-        this.buttonA.on('pointerdown', () => {
-            if(this.buttonA)
-                this.buttonA.setTint(0x0000ff);
-        });
-        this.buttonB.on('pointerdown', () => {
-            if(this.buttonB)
-                this.buttonB.setTint(0x0000ff);
-        });
 
-        // this.input.on('pointerover', function (pointer, gameObject) {
-
-        //     gameObject.setInteractive({ cursor: 'url(./src/games/gewgly/assets/images/pointer.png), pointer' });
-    
-        // });
-
-          balls.getChildren().forEach(
-                ball => {
-                    ball.setInteractive().on('pointerdown', (pointer, gameobject)=> {
-                        // gameobject.setTint(
-                            
-//                              this.add.group(null, {
-//                                 key: 'balls', 
-//                                 frame: [0, 1, 5],
-//                                 setScale: { x: 3, y: 3 },
-//                                 hitArea: hitArea,
-//                                 hitAreaCallback: hitAreaCallback,                                                                
-//                             })
-                    // );
-                })
-                
-                // ball = new Phaser.Geom.Circle(400, 300, 220);
-                // ball = this.buttonA;
-            //    this.buttonA =  this.add.image(465, 365, 'play').setInteractive();
-            });
-        
-        // https://photonstorm.github.io/phaser3-docs/Phaser.Types.GameObjects.Group.html#.GroupCreateConfig
-    
         Phaser.Actions.PlaceOnCircle( balls.getChildren(), circle);
 
         return balls;
     }
 
+
     generateDance() {
 
-        this.downButton = this.add.image(230, 530, 'up-bubble').setInteractive();
+        this.downButton = this.add.image(230, 530, 'up-bubble').setInteractive();       
+
         this.upButton = this.add.image( 80, 530, 'down-bubble').setInteractive();
 
         this.spinSpeed = 0.003;
     
         this.downButton.on ('pointerdown', (event) => {
 
-            if (this.spinSpeed < 1) { this.spinSpeed += 0.002; }
+            if (this.spinSpeed < 1) { 
+                this.spinSpeed += 0.002;             
+            }
         });
 
         this.upButton.on('pointerdown', (event) => {
 
-            if (this.spinSpeed > 0 ) { this.spinSpeed -= 0.001; }
+            if (this.spinSpeed > 0 ) {
+                this.spinSpeed -= 0.001;
+            }
         }); 
-        
+                        
         return this.tweens.addCounter({
             from: 220,
             to: 160,
@@ -169,9 +174,11 @@ export class StationaryScene extends Phaser.Scene {
             delay: 2000,
             ease: 'Sine.easeInOut',
             repeat: -1,
-            yoyo: true
+            yoyo: true            
         });
     }
+
+   
 
     update() {
         
